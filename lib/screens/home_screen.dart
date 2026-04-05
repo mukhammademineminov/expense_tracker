@@ -44,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _loadTransactions();
   }
-
+//Loads transactions from isar database
   void _loadTransactions() async {
     final result = await widget.isar.transactions.where().findAll();
     setState(() => transactions = result);
@@ -114,20 +114,37 @@ class _HomeScreenState extends State<HomeScreen> {
           )),
 
           for (var transation in transactions)
-            (Card(
-              child: ListTile(
-                title: Text(transation.title),
-                subtitle: Text('\$${transation.amount.toString()}'),
-                trailing: Icon(
-                  transation.isIncome
-                      ? Icons.arrow_upward
-                      : Icons.arrow_downward,
-                  color: transation.isIncome
-                      ? Colors.greenAccent
-                      : Colors.redAccent,
-                ),
+            //Swipe Right to left to delete
+            Dismissible(
+              background: Container(
+                color: Colors.red,
+                alignment: Alignment.centerRight,
+                padding: EdgeInsets.only(right: 20),
+                child: Icon(Icons.delete, color: Colors.white),
               ),
-            )),
+              direction: DismissDirection.endToStart,
+              key: ValueKey(transation.id),
+              onDismissed: (direction) async {
+                await widget.isar.writeTxn(() async {
+                  await widget.isar.transactions.delete(transation.id);
+                });
+                _loadTransactions();
+              },
+              child: (Card(
+                child: ListTile(
+                  title: Text(transation.title),
+                  subtitle: Text('\$${transation.amount}'),
+                  trailing: Icon(
+                    transation.isIncome
+                        ? Icons.arrow_upward
+                        : Icons.arrow_downward,
+                    color: transation.isIncome
+                        ? Colors.greenAccent
+                        : Colors.redAccent,
+                  ),
+                ),
+              )),
+            ),
         ],
       ),
     );
