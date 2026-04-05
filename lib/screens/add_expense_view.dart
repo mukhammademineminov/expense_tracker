@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+
 class AddExpenseView extends StatefulWidget {
   
   final VoidCallback onInvalidAmount;
@@ -12,7 +13,7 @@ class AddExpenseView extends StatefulWidget {
 class _AddExpenseViewState extends State<AddExpenseView> {
   late TextEditingController _titleController;
   late TextEditingController _amountController;
-  List<bool> _isSelected = [true, false];
+  final List<bool> _isSelected = [true, false];
   
  
   @override
