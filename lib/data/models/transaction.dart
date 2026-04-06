@@ -1,5 +1,7 @@
+import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
 part 'transaction.g.dart';
+final DateFormat formatter = DateFormat('dd/MM/yyyy HH:mm:ss');
 
 @collection
 class Transaction {
@@ -7,6 +9,5 @@ class Transaction {
   late String title;
   late double amount;
   late bool isIncome;
-  DateTime date = DateTime.now();
-
+  late String date = formatter.format(DateTime.now());
 }

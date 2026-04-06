@@ -1,11 +1,13 @@
 import 'package:expense_tracker/data/models/transaction.dart';
-
 import 'package:expense_tracker/screens/add_expense_view.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:expense_tracker/screens/pdf_service.dart';
+import 'package:expense_tracker/data/models/calculation.dart';
 
 class HomeScreen extends StatefulWidget {
   final Isar isar;
+  
   const HomeScreen({super.key, required this.isar});
 
   @override
@@ -13,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  //Opens bottom sheet to add expense, saves to isar database if valid
   void _showBotttomSheetPressed() async {
     final result = await showModalBottomSheet(
       context: context,
@@ -49,35 +52,30 @@ class _HomeScreenState extends State<HomeScreen> {
     final result = await widget.isar.transactions.where().findAll();
     setState(() => transactions = result);
   }
-
-  List<double> totalBalance() {
-    double total = 0;
-    double totalIncome = 0;
-    double totalExpense = 0;
-
-    //total income
-    totalIncome = transactions
-        .where((t) => t.isIncome == true)
-        .fold(0.0, (sum, t) => sum + t.amount);
-    //total expense
-    totalExpense = transactions
-        .where((t) => t.isIncome == false)
-        .fold(0.0, (sum, t) => sum + t.amount);
-
-    total = totalIncome - totalExpense;
-    return [totalIncome, totalExpense, total];
-  }
+//calculates total balance
+  
 
   @override
   Widget build(BuildContext context) {
-    final balance = totalBalance();
+    
+    
+    final balance = totalBalance(transactions);
     return Scaffold(
+      
       floatingActionButton: FloatingActionButton(
         onPressed: _showBotttomSheetPressed,
         child: Icon(Icons.add),
       ),
 
-      appBar: AppBar(title: Text('Expense Tracker')),
+      appBar: AppBar(
+        title: Text('Expense Tracker'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.picture_as_pdf, color: Colors.black),
+            onPressed: () => PdfService.generateReport(transactions),
+          )
+        ],
+      ),
       body: ListView(
         children: [
           (Card(
