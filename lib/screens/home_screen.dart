@@ -15,10 +15,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
   //Opens bottom sheet to add expense, saves to isar database if valid
   void _showBotttomSheetPressed() async {
     final result = await showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder: (ctx) => AddExpenseView(
         onInvalidAmount: () {
           ScaffoldMessenger.of(
@@ -47,13 +49,12 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _loadTransactions();
   }
-//Loads transactions from isar database
+
+  //Loads transactions from isar database
   void _loadTransactions() async {
     final result = await widget.isar.transactions.where().findAll();
     setState(() => transactions = result);
   }
-//calculates total balance
-  
 
   @override
   Widget build(BuildContext context) {
