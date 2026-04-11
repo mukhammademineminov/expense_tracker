@@ -36,6 +36,7 @@ class PdfService {
                     cell(balance[2].toString()),
                   ],
                 ),
+                
                 // header
                 pw.TableRow(
                   children: [

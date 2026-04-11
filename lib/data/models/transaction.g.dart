@@ -22,18 +22,23 @@ const TransactionSchema = CollectionSchema(
       name: r'amount',
       type: IsarType.double,
     ),
-    r'date': PropertySchema(
+    r'category': PropertySchema(
       id: 1,
+      name: r'category',
+      type: IsarType.string,
+    ),
+    r'date': PropertySchema(
+      id: 2,
       name: r'date',
       type: IsarType.string,
     ),
     r'isIncome': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'isIncome',
       type: IsarType.bool,
     ),
     r'title': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'title',
       type: IsarType.string,
     )
@@ -58,6 +63,7 @@ int _transactionEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.category.length * 3;
   bytesCount += 3 + object.date.length * 3;
   bytesCount += 3 + object.title.length * 3;
   return bytesCount;
@@ -70,9 +76,10 @@ void _transactionSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeDouble(offsets[0], object.amount);
-  writer.writeString(offsets[1], object.date);
-  writer.writeBool(offsets[2], object.isIncome);
-  writer.writeString(offsets[3], object.title);
+  writer.writeString(offsets[1], object.category);
+  writer.writeString(offsets[2], object.date);
+  writer.writeBool(offsets[3], object.isIncome);
+  writer.writeString(offsets[4], object.title);
 }
 
 Transaction _transactionDeserialize(
@@ -83,10 +90,11 @@ Transaction _transactionDeserialize(
 ) {
   final object = Transaction();
   object.amount = reader.readDouble(offsets[0]);
-  object.date = reader.readString(offsets[1]);
+  object.category = reader.readString(offsets[1]);
+  object.date = reader.readString(offsets[2]);
   object.id = id;
-  object.isIncome = reader.readBool(offsets[2]);
-  object.title = reader.readString(offsets[3]);
+  object.isIncome = reader.readBool(offsets[3]);
+  object.title = reader.readString(offsets[4]);
   return object;
 }
 
@@ -102,8 +110,10 @@ P _transactionDeserializeProp<P>(
     case 1:
       return (reader.readString(offset)) as P;
     case 2:
-      return (reader.readBool(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 3:
+      return (reader.readBool(offset)) as P;
+    case 4:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -262,6 +272,141 @@ extension TransactionQueryFilter
         upper: upper,
         includeUpper: includeUpper,
         epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition> categoryEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'category',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+      categoryGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'category',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+      categoryLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'category',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition> categoryBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'category',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+      categoryStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'category',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+      categoryEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'category',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+      categoryContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'category',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition> categoryMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'category',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+      categoryIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'category',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+      categoryIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'category',
+        value: '',
       ));
     });
   }
@@ -613,6 +758,18 @@ extension TransactionQuerySortBy
     });
   }
 
+  QueryBuilder<Transaction, Transaction, QAfterSortBy> sortByCategory() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'category', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterSortBy> sortByCategoryDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'category', Sort.desc);
+    });
+  }
+
   QueryBuilder<Transaction, Transaction, QAfterSortBy> sortByDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'date', Sort.asc);
@@ -661,6 +818,18 @@ extension TransactionQuerySortThenBy
   QueryBuilder<Transaction, Transaction, QAfterSortBy> thenByAmountDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'amount', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterSortBy> thenByCategory() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'category', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterSortBy> thenByCategoryDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'category', Sort.desc);
     });
   }
 
@@ -721,6 +890,13 @@ extension TransactionQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Transaction, Transaction, QDistinct> distinctByCategory(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'category', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Transaction, Transaction, QDistinct> distinctByDate(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -753,6 +929,12 @@ extension TransactionQueryProperty
   QueryBuilder<Transaction, double, QQueryOperations> amountProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'amount');
+    });
+  }
+
+  QueryBuilder<Transaction, String, QQueryOperations> categoryProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'category');
     });
   }
 

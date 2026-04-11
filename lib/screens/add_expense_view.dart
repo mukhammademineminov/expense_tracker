@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:expense_tracker/data/models/transaction.dart';
 
 class AddExpenseView extends StatefulWidget {
   final VoidCallback onInvalidAmount;
@@ -12,6 +13,7 @@ class _AddExpenseViewState extends State<AddExpenseView> {
   late TextEditingController _titleController;
   late TextEditingController _amountController;
   final List<bool> _isSelected = [true, false];
+  late Category _selectedCategory = Category.other;
 
   @override
   void initState() {
@@ -79,9 +81,8 @@ class _AddExpenseViewState extends State<AddExpenseView> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Select Expense Type'),
+                  Text('Expense Type'),
                   SizedBox(width: 60),
-
                   //upward and downward buttons
                   ToggleButtons(
                     onPressed: (index) {
@@ -100,9 +101,36 @@ class _AddExpenseViewState extends State<AddExpenseView> {
                   ),
                 ],
               ),
-
+              SizedBox(height: 20),
+              
+              //category
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Expense category'),
+                  SizedBox(width: 20),
+                  
+                  DropdownButton<Category>(
+                    value: _selectedCategory,
+                    icon: const Icon(Icons.arrow_drop_down),
+                    items: Category.values
+                        .map(
+                          (category) => DropdownMenuItem(
+                            value: category,
+                            child: Text(category.name),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() => _selectedCategory = value!);
+                    },
+                    
+                  ),
+                ],
+              ),
               SizedBox(height: 20),
 
+              //add button
               ElevatedButton(
                 onPressed: () {
                   final amount = double.tryParse(_amountController.text);
@@ -118,6 +146,7 @@ class _AddExpenseViewState extends State<AddExpenseView> {
                         : 'No Title',
                     'amount': amount,
                     'isInCome': _isSelected[0],
+                    'category': _selectedCategory.name,
                   });
                 },
                 child: Text('Add'),
