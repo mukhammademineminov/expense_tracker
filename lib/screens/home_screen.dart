@@ -1,6 +1,5 @@
 import 'package:expense_tracker/data/models/transaction.dart';
 import 'package:expense_tracker/screens/add_expense_view.dart';
-import 'package:expense_tracker/screens/stats_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:expense_tracker/screens/pdf_service.dart';
@@ -8,15 +7,17 @@ import 'package:expense_tracker/data/models/calculation.dart';
 
 class HomeScreen extends StatefulWidget {
   final Isar isar;
+  final Function onTransactionAdded;
 
-  const HomeScreen({super.key, required this.isar});
+  const HomeScreen({super.key, required this.isar, required this.onTransactionAdded});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  //Opens bottom sheet to add expense, saves to isar database if valid
+
+  //Add expense bottom sheet
   void _showBotttomSheetPressed() async {
     final result = await showModalBottomSheet(
       context: context,
@@ -67,10 +68,14 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
 
       appBar: AppBar(
-        title: Text('Expense Tracker'),
+        title: Text('Expense Tracker',
+        style: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold
+        )),
         actions: [
           IconButton(
-            icon: Icon(Icons.picture_as_pdf, color: Colors.black),
+            icon: Icon(Icons.picture_as_pdf),
             onPressed: () => PdfService.generateReport(transactions),
           ),
         ],
@@ -79,14 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           
           //Balance Card
-          GestureDetector(
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => StatsScreen(transactions: transactions),
-              ),
-            ),
-            child: Card(
+           Card(
               child: Row(
                 children: [
                   Expanded(
@@ -102,7 +100,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       trailing: Icon(
                         Icons.arrow_upward,
                         color: Colors.greenAccent,
+
                       ),
+                      
                     ),
                   ),
                   Expanded(
@@ -118,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-          ),
+          
 
           for (var transation in transactions)
             //Swipe Right to left to delete

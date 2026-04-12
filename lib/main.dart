@@ -1,5 +1,5 @@
 import 'package:expense_tracker/data/models/transaction.dart';
-import 'package:expense_tracker/screens/home_screen.dart';
+import 'package:expense_tracker/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
-      home: HomeScreen(isar: isar),
+      home: MainScreen(isar: isar)
     );
   }
 }
