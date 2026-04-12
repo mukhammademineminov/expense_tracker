@@ -43,7 +43,7 @@ class _MainScreenState extends State<MainScreen> {
         children: [
           HomeScreen(isar: widget.isar,
           onTransactionAdded: _loadTransactions,),
-          StatsScreen(transactions: _transactions),
+          StatsScreen(transactions: _transactions,)
         ],
       ),
       bottomNavigationBar: GNav(
