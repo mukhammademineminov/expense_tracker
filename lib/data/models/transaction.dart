@@ -5,7 +5,6 @@ part 'transaction.g.dart';
 final DateFormat formatter = DateFormat('dd/MM/yyyy HH:mm:ss');
 
 enum Category {
-  income,
   bills,
   food,
   transport,

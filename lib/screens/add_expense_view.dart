@@ -81,7 +81,7 @@ class _AddExpenseViewState extends State<AddExpenseView> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Expense Type'),
+                  Text(_isSelected[0] ? 'Income' : 'Expense'),
                   SizedBox(width: 60),
                   //upward and downward buttons
                   ToggleButtons(
@@ -104,6 +104,7 @@ class _AddExpenseViewState extends State<AddExpenseView> {
               SizedBox(height: 20),
               
               //category
+              if (!_isSelected[0])
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
