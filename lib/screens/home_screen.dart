@@ -9,14 +9,17 @@ class HomeScreen extends StatefulWidget {
   final Isar isar;
   final Function onTransactionAdded;
 
-  const HomeScreen({super.key, required this.isar, required this.onTransactionAdded});
+  const HomeScreen({
+    super.key,
+    required this.isar,
+    required this.onTransactionAdded,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   //Add expense bottom sheet
   void _showBotttomSheetPressed() async {
     final result = await showModalBottomSheet(
@@ -69,11 +72,10 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
 
       appBar: AppBar(
-        title: Text('Expense Tracker',
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold
-        )),
+        title: Text(
+          'Expense Tracker',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.picture_as_pdf),
@@ -83,43 +85,68 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: ListView(
         children: [
-          
-          //Balance Card
-           Card(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ListTile(
-                      title: Text('Balance'),
-                      subtitle: Text('\$${balance[2]}'),
-                    ),
-                  ),
-                  Expanded(
-                    child: ListTile(
-                      title: Text('Income'),
-                      subtitle: Text('\$${balance[0]}'),
-                      trailing: Icon(
-                        Icons.arrow_upward,
-                        color: Colors.greenAccent,
+          SizedBox(height: 5),
 
-                      ),
-                      
-                    ),
+          //Balance Card
+          Card(
+            elevation: 5,
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Text(
+                    'Balance',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  Expanded(
-                    child: ListTile(
-                      title: Text('Expense'),
-                      subtitle: Text('\$${balance[1]}'),
-                      trailing: Icon(
-                        Icons.arrow_downward,
-                        color: Colors.redAccent,
+                  SizedBox(height: 10),
+                  Text(
+                    '\$${balance[2]}',
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                    child: Divider(color: Colors.grey, thickness: 1, height: 1),
+                  ),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Column(
+                        children: [
+                          Text('Income'),
+                          SizedBox(height: 5),
+                          Text(
+                            '\$${balance[0]}',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
+                      Container(height: 40, width: 0.5, color: Colors.grey),
+
+                      Column(
+                        children: [
+                          Text('Expense'),
+                          SizedBox(height: 5),
+                          Text(
+                            '\$${balance[1]}',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-          
+          ),
 
           for (var transation in transactions)
             //Swipe Right to left to delete

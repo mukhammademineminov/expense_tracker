@@ -73,10 +73,11 @@ class StatsScreen extends StatelessWidget {
                           value: _categoryTotal(category),
                           color: Colors.primaries[category.index],
                           title:
-                              '${_categoryTotal(category) * 100 ~/ transactions.fold<double>(0.0, (sum, t) => sum + (t.isIncome ? 0 : t.amount))}%',
+                              '${(_categoryTotal(category) * 100 / transactions
+                                .fold<double>(0.0, (sum, t) => sum + (t.isIncome ? 0 : t.amount))).toStringAsFixed(2)}%',
                           radius: 80,
                           titleStyle: TextStyle(
-                            fontSize: 14,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -164,7 +165,7 @@ class StatsScreen extends StatelessWidget {
                         _last7DaysData()
                             .map((g) => g.barRods.first.toY)
                             .reduce(max) + 100,
-                            
+
                     // Style bars
                     barGroups: [
                       for (var group in _last7DaysData())
