@@ -31,9 +31,11 @@ flutter run
 
 ## Screenshots
 
-![Home Screen](assets/screenshots/home.png)
-![Stats Screen](assets/screenshots/stats.png)
-![Add Expense](assets/screenshots/add.png)
+<p float="left">
+  <img src="assets/screenshots/home.png" width="200"/>
+  <img src="assets/screenshots/stats.png" width="200"/>
+  <img src="assets/screenshots/add.png" width="200"/>
+</p>
 
 ## Author
 
