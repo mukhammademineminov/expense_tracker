@@ -1,17 +1,40 @@
-# expense_tracker
+# Expense Tracker 
 
-A new Flutter project.
+A personal finance app built with Flutter to track income and expenses.
+
+## Features
+
+- Add income and expense transactions
+- Category-based organization
+- Visual statistics with pie and bar charts
+- PDF export of transaction history
+- Dark mode support
+- Swipe to delete transactions
+
+## Tech Stack
+
+- **Flutter** — cross-platform mobile development
+- **Isar DB** — local database
+- **fl_chart** — pie and bar charts
+- **pdf & printing** — PDF export
+- **Riverpod** — state management (coming soon)
+- **intl** — date and number formatting
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+```bash
+git clone https://github.com/USERNAME/expense_tracker.git
+cd expense_tracker
+flutter pub get
+flutter run
+```
 
-A few resources to get you started if this is your first Flutter project:
+## Screenshots
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+![Home Screen](assets/screenshots/home.png)
+![Stats Screen](assets/screenshots/stats.png)
+![Add Expense](assets/screenshots/add.png)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Author
+
+Made by **Mukhammademin** — learning Flutter one commit at a time
