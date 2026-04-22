@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:expense_tracker/screens/home_screen.dart';
 import 'package:expense_tracker/screens/stats_screen.dart';
-import 'package:isar/isar.dart';
-import 'package:expense_tracker/data/models/transaction.dart';
 
-class MainScreen extends StatefulWidget {
-  final Isar isar;
-  const MainScreen({super.key, required this.isar});
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:expense_tracker/providers/transaction_provider.dart';
+
+class MainScreen extends ConsumerStatefulWidget {
+  const MainScreen({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  ConsumerState<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends ConsumerState<MainScreen> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -22,35 +22,24 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  List<Transaction> _transactions = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadTransactions();
-  }
-
-  void _loadTransactions() async {
-    final result = await widget.isar.transactions.where().findAll();
-    setState(() => _transactions = result);
-  }
-
   @override
   Widget build(BuildContext context) {
+    final transactions = ref.watch(transactionProvider);
+
     return Scaffold(
       body: IndexedStack(
         index: _selectedIndex,
         children: [
-          HomeScreen(isar: widget.isar,
-          onTransactionAdded: _loadTransactions,),
-          StatsScreen(transactions: _transactions,)
+          HomeScreen(
+            onTransactionAdded: () => ref.refresh(transactionProvider),
+          ),
+          StatsScreen(transactions: transactions)
         ],
       ),
       bottomNavigationBar: GNav(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        gap:20,
+        gap: 20,
         tabs: [
-          
           GButton(
             icon: Icons.home,
             text: 'Home',
@@ -60,12 +49,9 @@ class _MainScreenState extends State<MainScreen> {
             text: 'Stats',
           ),
         ],
-        
         selectedIndex: _selectedIndex,
         onTabChange: _onItemTapped,
       ),
-      
-  
     );
   }
 }

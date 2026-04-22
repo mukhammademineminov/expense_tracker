@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:expense_tracker/core/theme.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/transaction_provider.dart';
 
 
 void main() async {
@@ -13,12 +15,18 @@ void main() async {
 
   final isar = await Isar.open([TransactionSchema], directory: dir.path);
 
-  runApp(MyApp(isar: isar));
+  runApp(
+    ProviderScope(
+      overrides: [
+        isarProvider.overrideWithValue(isar),
+      ],
+      child: MyApp()
+    )
+  );
 }
 
 class MyApp extends StatelessWidget {
-  final Isar isar;
-  const MyApp({super.key, required this.isar});
+  const MyApp({super.key});
   
 
   @override
@@ -29,7 +37,7 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
-      home: MainScreen(isar: isar)
+      home: MainScreen()
     );
   }
 }
