@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import '../data/models/transaction.dart';
@@ -14,7 +15,7 @@ class TransactionNotifier extends StateNotifier<List<Transaction>> {
     final result = await isar.transactions.where().findAll();
     state = result;
     } catch (e) {
-      // Handle error, e.g. log it or show a message
+      debugPrint('Error loading transactions: $e');
      
     }
   }
@@ -27,7 +28,7 @@ class TransactionNotifier extends StateNotifier<List<Transaction>> {
 
       loadTransactions();
     } catch (e) {
-      // Handle error, e.g. log it or show a message
+      debugPrint('Error adding transaction: $e');
     }
   }
 
@@ -39,7 +40,7 @@ class TransactionNotifier extends StateNotifier<List<Transaction>> {
 
       loadTransactions();
     } catch (e) {
-      // Handle error, e.g. log it or show a message
+      debugPrint('Error deleting transaction: $e');
     }
   }
 }

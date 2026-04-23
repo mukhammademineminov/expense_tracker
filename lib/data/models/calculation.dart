@@ -1,20 +1,32 @@
 import 'package:expense_tracker/data/models/transaction.dart';
 
+  
+class BalanceSummary {
+  final double income;
+  final double expense;
+  final double total;
 
-List<double> totalBalance(List<Transaction> transactions) {
-    double total = 0;
-    double totalIncome = 0;
-    double totalExpense = 0;
+  BalanceSummary({
+    required this.income,
+    required this.expense,
+    required this.total,
+  });
 
-    //total income
-    totalIncome = transactions
+  factory BalanceSummary.fromTransactions(List<Transaction> transactions) {
+    double totalIncome = transactions
         .where((t) => t.isIncome == true)
         .fold(0.0, (sum, t) => sum + t.amount);
-    //total expense
-    totalExpense = transactions
+
+    double totalExpense = transactions
         .where((t) => t.isIncome == false)
         .fold(0.0, (sum, t) => sum + t.amount);
 
-    total = totalIncome - totalExpense;
-    return [totalIncome, totalExpense, total];
+    double total = totalIncome - totalExpense;
+
+    return BalanceSummary(
+      income: totalIncome,
+      expense: totalExpense,
+      total: total,
+    );
   }
+}

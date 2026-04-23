@@ -30,7 +30,7 @@ const TransactionSchema = CollectionSchema(
     r'date': PropertySchema(
       id: 2,
       name: r'date',
-      type: IsarType.string,
+      type: IsarType.dateTime,
     ),
     r'isIncome': PropertySchema(
       id: 3,
@@ -64,7 +64,6 @@ int _transactionEstimateSize(
 ) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.category.length * 3;
-  bytesCount += 3 + object.date.length * 3;
   bytesCount += 3 + object.title.length * 3;
   return bytesCount;
 }
@@ -77,7 +76,7 @@ void _transactionSerialize(
 ) {
   writer.writeDouble(offsets[0], object.amount);
   writer.writeString(offsets[1], object.category);
-  writer.writeString(offsets[2], object.date);
+  writer.writeDateTime(offsets[2], object.date);
   writer.writeBool(offsets[3], object.isIncome);
   writer.writeString(offsets[4], object.title);
 }
@@ -91,7 +90,7 @@ Transaction _transactionDeserialize(
   final object = Transaction();
   object.amount = reader.readDouble(offsets[0]);
   object.category = reader.readString(offsets[1]);
-  object.date = reader.readString(offsets[2]);
+  object.date = reader.readDateTime(offsets[2]);
   object.id = id;
   object.isIncome = reader.readBool(offsets[3]);
   object.title = reader.readString(offsets[4]);
@@ -110,7 +109,7 @@ P _transactionDeserializeProp<P>(
     case 1:
       return (reader.readString(offset)) as P;
     case 2:
-      return (reader.readString(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 3:
       return (reader.readBool(offset)) as P;
     case 4:
@@ -412,54 +411,46 @@ extension TransactionQueryFilter
   }
 
   QueryBuilder<Transaction, Transaction, QAfterFilterCondition> dateEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+      DateTime value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'date',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Transaction, Transaction, QAfterFilterCondition> dateGreaterThan(
-    String value, {
+    DateTime value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'date',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Transaction, Transaction, QAfterFilterCondition> dateLessThan(
-    String value, {
+    DateTime value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'date',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Transaction, Transaction, QAfterFilterCondition> dateBetween(
-    String lower,
-    String upper, {
+    DateTime lower,
+    DateTime upper, {
     bool includeLower = true,
     bool includeUpper = true,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -468,76 +459,6 @@ extension TransactionQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Transaction, Transaction, QAfterFilterCondition> dateStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'date',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Transaction, Transaction, QAfterFilterCondition> dateEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'date',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Transaction, Transaction, QAfterFilterCondition> dateContains(
-      String value,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'date',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Transaction, Transaction, QAfterFilterCondition> dateMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'date',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Transaction, Transaction, QAfterFilterCondition> dateIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'date',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
-      dateIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'date',
-        value: '',
       ));
     });
   }
@@ -897,10 +818,9 @@ extension TransactionQueryWhereDistinct
     });
   }
 
-  QueryBuilder<Transaction, Transaction, QDistinct> distinctByDate(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Transaction, Transaction, QDistinct> distinctByDate() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'date', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'date');
     });
   }
 
@@ -938,7 +858,7 @@ extension TransactionQueryProperty
     });
   }
 
-  QueryBuilder<Transaction, String, QQueryOperations> dateProperty() {
+  QueryBuilder<Transaction, DateTime, QQueryOperations> dateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'date');
     });

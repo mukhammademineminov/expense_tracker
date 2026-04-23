@@ -2,7 +2,7 @@ import 'package:expense_tracker/data/models/transaction.dart';
 import 'package:expense_tracker/screens/add_expense_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:expense_tracker/screens/pdf_service.dart';
+import 'package:expense_tracker/services/pdf_service.dart';
 import 'package:expense_tracker/data/models/calculation.dart';
 import 'package:expense_tracker/providers/transaction_provider.dart';
 
@@ -32,7 +32,8 @@ class HomeScreen extends ConsumerWidget {
         ..title = result['title']
         ..amount = result['amount']
         ..isIncome = result['isInCome']
-        ..category = result['category'];
+        ..category = result['category']
+        ..date = DateTime.now();
 
       await ref.read(transactionProvider.notifier).addTransaction(transaction);
       onTransactionAdded?.call();
@@ -42,8 +43,8 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final transactions = ref.watch(transactionProvider);
-    final balance = totalBalance(transactions);
-    
+    final balance = BalanceSummary.fromTransactions(transactions);
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showBotttomSheetPressed(context, ref),
@@ -79,7 +80,7 @@ class HomeScreen extends ConsumerWidget {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    '\$${balance[2]}',
+                    '\$${balance.total.toStringAsFixed(2)}',
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                   Padding(
@@ -95,7 +96,7 @@ class HomeScreen extends ConsumerWidget {
                           Text('Income'),
                           SizedBox(height: 5),
                           Text(
-                            '\$${balance[0]}',
+                            '\$${balance.income.toStringAsFixed(2)}',
                             style: TextStyle(
                               color: Colors.green,
                               fontSize: 16,
@@ -111,7 +112,7 @@ class HomeScreen extends ConsumerWidget {
                           Text('Expense'),
                           SizedBox(height: 5),
                           Text(
-                            '\$${balance[1]}',
+                            '\$${balance.expense.toStringAsFixed(2)}',
                             style: TextStyle(
                               color: Colors.red,
                               fontSize: 16,

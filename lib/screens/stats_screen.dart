@@ -20,7 +20,7 @@ class StatsScreen extends StatelessWidget {
     final now = DateTime.now();
     final week = now.subtract(Duration(days: 7));
     return transactions
-        .where((t) => !t.isIncome && formatter.parse(t.date).isAfter(week))
+        .where((t) => !t.isIncome && t.date.isAfter(week))
         .toList();
   }
 
@@ -28,7 +28,7 @@ class StatsScreen extends StatelessWidget {
     return List.generate(7, (index) {
       final day = DateTime.now().subtract(Duration(days: 6 - index));
       final total = _last7Days()
-          .where((t) => formatter.parse(t.date).day == day.day)
+          .where((t) => t.date.day == day.day)
           .fold<double>(0.0, (sum, t) => sum + t.amount);
       return BarChartGroupData(
         x: index,

@@ -104,7 +104,7 @@ class _AddExpenseViewState extends State<AddExpenseView> {
               SizedBox(height: 20),
               
               //category
-              if (!_isSelected[0])
+              if (!_isSelected[0]) //only show category dropdown for expenses
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

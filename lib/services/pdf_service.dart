@@ -2,11 +2,12 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import '../data/models/transaction.dart';
 import 'package:expense_tracker/data/models/calculation.dart';
+import 'package:intl/intl.dart';
 
 class PdfService {
   static Future<void> generateReport(List<Transaction> transactions) async {
     final doc = pw.Document();
-    final balance = totalBalance(transactions);
+    final balance = BalanceSummary.fromTransactions(transactions);
     //adds padding to cells
     pw.Widget cell(String text) =>
         pw.Padding(padding: const pw.EdgeInsets.all(6), child: pw.Text(text));
@@ -31,9 +32,9 @@ class PdfService {
 
                 pw.TableRow(
                   children: [
-                    cell(balance[0].toString()),
-                    cell(balance[1].toString()),
-                    cell(balance[2].toString()),
+                    cell(balance.income.toStringAsFixed(2)),
+                    cell(balance.expense.toStringAsFixed(2)),
+                    cell(balance.total.toStringAsFixed(2)),
                   ],
                 ),
                 
@@ -51,7 +52,7 @@ class PdfService {
                     children: [
                       cell(t.title),
                       cell('\$${t.amount}'),
-                      cell(t.date.toString()),
+                      cell(DateFormat('dd/MM/yyyy').format(t.date)),
                     ],
                   ),
                 ),
