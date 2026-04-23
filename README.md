@@ -23,7 +23,7 @@ A personal finance app built with Flutter to track income and expenses.
 ## Getting Started
 
 ```bash
-git clone https://github.com/USERNAME/expense_tracker.git
+git clone https://github.com/mukhammademineminov/expense_tracker.git
 cd expense_tracker
 flutter pub get
 flutter run
