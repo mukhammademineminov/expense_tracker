@@ -45,8 +45,6 @@ app.*.map.json
 /android/app/release
 
 # Platform-specific (auto-generated)
-android/
-ios/
 linux/
 macos/
 windows/

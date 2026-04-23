@@ -17,7 +17,7 @@ A personal finance app built with Flutter to track income and expenses.
 - **Isar DB** — local database
 - **fl_chart** — pie and bar charts
 - **pdf & printing** — PDF export
-- **Riverpod** — state management (coming soon)
+- **Riverpod** — state management
 - **intl** — date and number formatting
 
 ## Getting Started
