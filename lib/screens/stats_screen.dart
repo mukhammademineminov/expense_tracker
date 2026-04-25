@@ -1,9 +1,10 @@
-import 'package:expense_tracker/data/models/transaction.dart';
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'dart:math';
-
 import 'package:intl/intl.dart';
+import 'dart:math';
+import 'package:fl_chart/fl_chart.dart';
+
+import 'package:expense_tracker/data/models/transaction.dart';
+
 
 class StatsScreen extends StatelessWidget {
   final List<Transaction> transactions;

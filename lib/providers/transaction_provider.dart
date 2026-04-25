@@ -5,21 +5,33 @@ import '../data/models/transaction.dart';
 
 class TransactionNotifier extends StateNotifier<List<Transaction>> {
   final Isar isar;
-  
+  int? _currentFilterDays;
   TransactionNotifier(this.isar) : super([]) {
     loadTransactions();
   }
-  
-  Future<void> loadTransactions() async {
-    try {
-    final result = await isar.transactions.where().findAll();
-    state = result;
-    } catch (e) {
-      debugPrint('Error loading transactions: $e');
-     
+  Future<void> loadTransactions({int? filterDays}) async {
+  try {
+    List<Transaction> result;
+    
+    if (filterDays != null) {
+      _currentFilterDays = filterDays;
+      final cutoff = DateTime.now().subtract(Duration(days: filterDays));
+      
+      result = await isar.transactions
+          .filter()
+          .dateGreaterThan(cutoff)
+          .findAll();
+    } else {
+      _currentFilterDays = null;
+      
+      result = await isar.transactions.where().findAll();
     }
+    
+    state = result;
+  } catch (e) {
+    debugPrint('Error loading transactions: $e');
   }
-
+}
   Future<void> addTransaction(Transaction transaction) async {
     try {
     await isar.writeTxn(() async {
@@ -43,6 +55,7 @@ class TransactionNotifier extends StateNotifier<List<Transaction>> {
       debugPrint('Error deleting transaction: $e');
     }
   }
+
 }
 final isarProvider = Provider<Isar>((ref) => throw UnimplementedError());
 

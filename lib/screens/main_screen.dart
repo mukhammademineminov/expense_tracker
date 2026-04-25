@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+
+import 'package:expense_tracker/providers/transaction_provider.dart';
+
 import 'package:expense_tracker/screens/home_screen.dart';
 import 'package:expense_tracker/screens/stats_screen.dart';
-
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:expense_tracker/providers/transaction_provider.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});

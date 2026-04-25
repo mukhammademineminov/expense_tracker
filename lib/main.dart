@@ -1,10 +1,12 @@
-import 'package:expense_tracker/data/models/transaction.dart';
-import 'package:expense_tracker/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:expense_tracker/core/theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
+
+import 'package:expense_tracker/data/models/transaction.dart';
+import 'package:expense_tracker/screens/main_screen.dart';
+
+import 'package:expense_tracker/core/theme.dart';
 import '../providers/transaction_provider.dart';
 
 

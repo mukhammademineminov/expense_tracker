@@ -146,12 +146,13 @@ class _AddExpenseViewState extends State<AddExpenseView> {
                         ? _titleController.text
                         : 'No Title',
                     'amount': amount,
-                    'isInCome': _isSelected[0],
+                    'isIncome': _isSelected[0],
                     'category': _selectedCategory.name,
                   });
                 },
                 child: Text('Add'),
               ),
+              
             ],
           ),
         ),

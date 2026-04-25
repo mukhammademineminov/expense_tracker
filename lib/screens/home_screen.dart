@@ -1,19 +1,31 @@
-import 'package:expense_tracker/data/models/transaction.dart';
-import 'package:expense_tracker/screens/add_expense_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:expense_tracker/services/pdf_service.dart';
-import 'package:expense_tracker/data/models/calculation.dart';
-import 'package:expense_tracker/providers/transaction_provider.dart';
 
-class HomeScreen extends ConsumerWidget {
+import 'package:expense_tracker/data/models/transaction.dart';
+import 'package:expense_tracker/data/models/calculation.dart';
+import 'package:expense_tracker/data/models/transaction_period.dart';
+
+import 'package:expense_tracker/providers/transaction_provider.dart';
+import 'package:expense_tracker/providers/transaction_period_provider.dart';
+
+import 'package:expense_tracker/screens/add_expense_view.dart';
+
+import 'package:expense_tracker/widgets/balance_card.dart';
+import 'package:expense_tracker/widgets/transaction_card.dart';
+
+import 'package:expense_tracker/services/pdf_service.dart';
+
+
+class HomeScreen extends ConsumerStatefulWidget {
   final Function? onTransactionAdded;
 
-  const HomeScreen({
-    super.key,
-    this.onTransactionAdded,
-  });
+  const HomeScreen({super.key, this.onTransactionAdded});
+  @override
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
 
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  //String _dayPeriod = 'All Time';
   //Add expense bottom sheet
   void _showBotttomSheetPressed(BuildContext context, WidgetRef ref) async {
     final result = await showModalBottomSheet(
@@ -31,18 +43,18 @@ class HomeScreen extends ConsumerWidget {
       final transaction = Transaction()
         ..title = result['title']
         ..amount = result['amount']
-        ..isIncome = result['isInCome']
+        ..isIncome = result['isIncome']
         ..category = result['category']
         ..date = DateTime.now();
 
       await ref.read(transactionProvider.notifier).addTransaction(transaction);
-      onTransactionAdded?.call();
+      widget.onTransactionAdded?.call();
     }
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final transactions = ref.watch(transactionProvider);
+  Widget build(BuildContext context) {
+    final transactions = ref.watch(transactionProvider).toList();
     final balance = BalanceSummary.fromTransactions(transactions);
 
     return Scaffold(
@@ -64,71 +76,48 @@ class HomeScreen extends ConsumerWidget {
         ],
       ),
       body: ListView(
+        padding: EdgeInsets.only(left: 10, right: 10, top: 10),
         children: [
-          SizedBox(height: 5),
+          // filter transactions by date
+          PopupMenuButton<TransactionPeriod>(
+            icon: Consumer(
+              builder: (context, ref, _) {
+                final period = ref.watch(dayPeriodProvider);
 
-          //Balance Card
-          Card(
-            elevation: 5,
-            child: Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  Text(
-                    'Balance',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    '\$${balance.total.toStringAsFixed(2)}',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 15),
-                    child: Divider(color: Colors.grey, thickness: 1, height: 1),
-                  ),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Column(
-                        children: [
-                          Text('Income'),
-                          SizedBox(height: 5),
-                          Text(
-                            '\$${balance.income.toStringAsFixed(2)}',
-                            style: TextStyle(
-                              color: Colors.green,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(height: 40, width: 0.5, color: Colors.grey),
-
-                      Column(
-                        children: [
-                          Text('Expense'),
-                          SizedBox(height: 5),
-                          Text(
-                            '\$${balance.expense.toStringAsFixed(2)}',
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(period.label, style: TextStyle(fontSize: 14)),
+                    Icon(Icons.arrow_drop_down, size: 20),
+                  ],
+                );
+              },
             ),
+            color: Colors.grey[900],
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            onSelected: (value) {
+              // 1. state update
+              ref.read(dayPeriodProvider.notifier).state = value;
+              // 2. filter transactions
+              ref.read(transactionProvider.notifier)
+                  .loadTransactions(filterDays: value.days);
+            },
+            itemBuilder: (context) => TransactionPeriod.values.map((period) {
+              return PopupMenuItem(value: period, child: Text(period.label));
+            }).toList(),
           ),
 
-          for (var transation in transactions)
+          //Balance Card
+          BalanceCard(
+            total: balance.total,
+            income: balance.income,
+            expense: balance.expense,
+          ),
+
+          //Transactions List
+          for (var transaction in transactions)
             //Swipe Right to left to delete
             Dismissible(
               background: Container(
@@ -138,24 +127,14 @@ class HomeScreen extends ConsumerWidget {
                 child: Icon(Icons.delete, color: Colors.white),
               ),
               direction: DismissDirection.endToStart,
-              key: ValueKey(transation.id),
+              key: ValueKey(transaction.id),
               onDismissed: (direction) async {
-                await ref.read(transactionProvider.notifier).deleteTransaction(transation);
+                await ref
+                    .read(transactionProvider.notifier)
+                    .deleteTransaction(transaction);
               },
-              child: (Card(
-                child: ListTile(
-                  title: Text(transation.title),
-                  subtitle: Text('\$${transation.amount}'),
-                  trailing: Icon(
-                    transation.isIncome
-                        ? Icons.arrow_upward
-                        : Icons.arrow_downward,
-                    color: transation.isIncome
-                        ? Colors.greenAccent
-                        : Colors.redAccent,
-                  ),
-                ),
-              )),
+              //Transaction Card
+              child: TransactionCard(transaction: transaction),
             ),
         ],
       ),
