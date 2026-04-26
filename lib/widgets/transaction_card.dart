@@ -14,7 +14,7 @@ class TransactionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: CircleAvatar(  // Qo'shimcha: icon uchun
+        leading: CircleAvatar(
           backgroundColor: transaction.isIncome 
               ? Colors.green.withOpacity(0.1) 
               : Colors.red.withOpacity(0.1),

@@ -12,6 +12,7 @@ import 'package:expense_tracker/screens/add_expense_view.dart';
 
 import 'package:expense_tracker/widgets/balance_card.dart';
 import 'package:expense_tracker/widgets/transaction_card.dart';
+import 'package:expense_tracker/widgets/popup_menu.dart';
 
 import 'package:expense_tracker/services/pdf_service.dart';
 
@@ -79,36 +80,46 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         padding: EdgeInsets.only(left: 10, right: 10, top: 10),
         children: [
           // filter transactions by date
-          PopupMenuButton<TransactionPeriod>(
-            icon: Consumer(
-              builder: (context, ref, _) {
-                final period = ref.watch(dayPeriodProvider);
-
-                return Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(period.label, style: TextStyle(fontSize: 14)),
-                    Icon(Icons.arrow_drop_down, size: 20),
-                  ],
-                );
-              },
-            ),
-            color: Colors.grey[900],
-            shape: RoundedRectangleBorder(
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
             ),
-            onSelected: (value) {
-              // 1. state update
-              ref.read(dayPeriodProvider.notifier).state = value;
-              // 2. filter transactions
-              ref.read(transactionProvider.notifier)
-                  .loadTransactions(filterDays: value.days);
-            },
-            itemBuilder: (context) => TransactionPeriod.values.map((period) {
-              return PopupMenuItem(value: period, child: Text(period.label));
-            }).toList(),
-          ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                PopupMenu(
+                  items: TransactionPeriod.values
+                      .map((period) => PopupMenuItem(
+                            value: period,
+                            child: Text(period.label),
+                          ))
+                      .toList(),
+                  onSelected: (value) {
+                    // state update
+                    ref.read(dayPeriodProvider.notifier).state = value;
+                    // filter transactions
+                    ref.read(transactionProvider.notifier)
+                        .loadTransactions(filterDays: value.days);
+                  },
+                  child: Consumer(
+                    builder: (context, ref, _) {
+                      final period = ref.watch(dayPeriodProvider);
 
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(period.label, style: TextStyle(fontSize: 14)),
+                          Icon(Icons.arrow_drop_down, size: 20),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
           //Balance Card
           BalanceCard(
             total: balance.total,

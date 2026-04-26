@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/data/models/transaction.dart';
 
+import 'package:expense_tracker/widgets/popup_menu.dart';
+
 class AddExpenseView extends StatefulWidget {
   final VoidCallback onInvalidAmount;
   const AddExpenseView({super.key, required this.onInvalidAmount});
@@ -102,33 +104,41 @@ class _AddExpenseViewState extends State<AddExpenseView> {
                 ],
               ),
               SizedBox(height: 20),
-              
+
               //category
               if (!_isSelected[0]) //only show category dropdown for expenses
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Expense category'),
-                  SizedBox(width: 20),
-                  
-                  DropdownButton<Category>(
-                    value: _selectedCategory,
-                    icon: const Icon(Icons.arrow_drop_down),
-                    items: Category.values
-                        .map(
-                          (category) => DropdownMenuItem(
-                            value: category,
-                            child: Text(category.name),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() => _selectedCategory = value!);
-                    },
-                    
-                  ),
-                ],
-              ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Category:'),
+                    SizedBox(width: 10),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child: Center(
+                        child: PopupMenu(
+                        items: Category.values
+                            .map(
+                              (category) => PopupMenuItem(
+                                value: category,
+                                child: Text(category.name),
+                              ),
+                            )
+                            .toList(),
+                        onSelected: (value) {
+                          setState(() => _selectedCategory = value);
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(_selectedCategory.name),
+                            Icon(Icons.arrow_drop_down),
+                          ],
+                        ),
+                      ),
+                      ),
+                    ),
+                  ],
+                ),
               SizedBox(height: 20),
 
               //add button
@@ -152,7 +162,6 @@ class _AddExpenseViewState extends State<AddExpenseView> {
                 },
                 child: Text('Add'),
               ),
-              
             ],
           ),
         ),
