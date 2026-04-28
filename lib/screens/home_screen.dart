@@ -56,7 +56,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final transactions = ref.watch(transactionProvider).toList();
-    final balance = BalanceSummary.fromTransactions(transactions);
+    final calculated = BalanceSummary.fromTransactions(transactions);
+    final allTranactions = ref.read(transactionProvider.notifier).allTransactions;
+    final globalBalance = BalanceSummary.fromTransactions(allTranactions);
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -122,9 +124,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           
           //Balance Card
           BalanceCard(
-            total: balance.total,
-            income: balance.income,
-            expense: balance.expense,
+            total: globalBalance.balance,
+            income: calculated.income,
+            expense: calculated.expense,
           ),
 
           //Transactions List

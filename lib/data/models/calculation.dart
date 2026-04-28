@@ -4,12 +4,12 @@ import 'package:expense_tracker/data/models/transaction.dart';
 class BalanceSummary {
   final double income;
   final double expense;
-  final double total;
+  final double balance;
 
   BalanceSummary({
     required this.income,
     required this.expense,
-    required this.total,
+    required this.balance,
   });
 
   factory BalanceSummary.fromTransactions(List<Transaction> transactions) {
@@ -26,7 +26,7 @@ class BalanceSummary {
     return BalanceSummary(
       income: totalIncome,
       expense: totalExpense,
-      total: total,
+      balance: total,
     );
   }
 }

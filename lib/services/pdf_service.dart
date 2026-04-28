@@ -34,7 +34,7 @@ class PdfService {
                   children: [
                     cell(balance.income.toStringAsFixed(2)),
                     cell(balance.expense.toStringAsFixed(2)),
-                    cell(balance.total.toStringAsFixed(2)),
+                    cell(balance.balance.toStringAsFixed(2)),
                   ],
                 ),
                 

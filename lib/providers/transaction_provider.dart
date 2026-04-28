@@ -9,8 +9,10 @@ class TransactionNotifier extends StateNotifier<List<Transaction>> {
   TransactionNotifier(this.isar) : super([]) {
     loadTransactions();
   }
+  List<Transaction> allTransactions = [];
   Future<void> loadTransactions({int? filterDays}) async {
   try {
+    allTransactions = await isar.transactions.where().findAll();
     List<Transaction> result;
     
     if (filterDays != null) {
