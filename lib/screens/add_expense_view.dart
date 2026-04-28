@@ -1,7 +1,9 @@
+import 'package:expense_tracker/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/data/models/transaction.dart';
 
 import 'package:expense_tracker/widgets/popup_menu.dart';
+import 'package:expense_tracker/widgets/textfield.dart';
 
 class AddExpenseView extends StatefulWidget {
   final VoidCallback onInvalidAmount;
@@ -53,38 +55,29 @@ class _AddExpenseViewState extends State<AddExpenseView> {
               SizedBox(height: 20),
 
               //title
-              TextField(
+              CustomTextField(
+                label: 'Enter Expense Title',
                 controller: _titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Enter Expense Title',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                  ),
-                ),
               ),
               SizedBox(height: 20),
 
               //amount
-              TextField(
+              CustomTextField(
+                label: 'Enter Expense Amount',
                 controller: _amountController,
-                decoration: const InputDecoration(
-                  labelText: 'Enter Expense Amount',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                  ),
-                  prefixIcon: Icon(Icons.attach_money),
-                ),
+                prefixIcon: Icon(Icons.attach_money),
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
-                textInputAction: TextInputAction.done,
               ),
+
               SizedBox(height: 20),
 
               //expense type
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  SizedBox(width: 10),
                   Text(_isSelected[0] ? 'Income' : 'Expense'),
-                  SizedBox(width: 60),
+                  Spacer(),
                   //upward and downward buttons
                   ToggleButtons(
                     onPressed: (index) {
@@ -101,6 +94,7 @@ class _AddExpenseViewState extends State<AddExpenseView> {
                       Icon(Icons.arrow_downward),
                     ],
                   ),
+                  SizedBox(width: 10),
                 ],
               ),
               SizedBox(height: 20),
@@ -110,33 +104,30 @@ class _AddExpenseViewState extends State<AddExpenseView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Category:'),
                     SizedBox(width: 10),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      child: Center(
-                        child: PopupMenu(
-                        items: Category.values
-                            .map(
-                              (category) => PopupMenuItem(
-                                value: category,
-                                child: Text(category.name),
-                              ),
-                            )
-                            .toList(),
-                        onSelected: (value) {
-                          setState(() => _selectedCategory = value);
-                        },
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(_selectedCategory.name),
-                            Icon(Icons.arrow_drop_down),
-                          ],
-                        ),
-                      ),
+                    Text('Category:'),
+                    Spacer(),
+                    PopupMenu(
+                      items: Category.values
+                          .map(
+                            (category) => PopupMenuItem(
+                              value: category,
+                              child: Text(category.name),
+                            ),
+                          )
+                          .toList(),
+                      onSelected: (value) {
+                        setState(() => _selectedCategory = value);
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(_selectedCategory.name),
+                          Icon(Icons.arrow_drop_down),
+                        ],
                       ),
                     ),
+                    SizedBox(width: 10),
                   ],
                 ),
               SizedBox(height: 20),
